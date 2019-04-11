@@ -4,13 +4,21 @@ import Cookies from "universal-cookie";
 const cookies = new Cookies();
 
 class Index extends React.Component {
-  // componentWillMount() {
-  //   console.log(cookies.get("loggedIn"));
-  //   if (cookies.get("loggedIn") !== true) {
-  //     console.log("inside compwillmount");
-  //     this.props.history.push("/login");
-  //   }
-  // }
+  state = {
+    isLoading: true,
+    users: []
+  };
+
+  componentDidMount() {
+    fetch("http://localhost:5000/users")
+      .then(res => res.json())
+      .then(result => {
+        this.setState({
+          users: result,
+          isLoading: false
+        });
+      });
+  }
 
   render() {
     if (cookies.get("loggedIn") === "false") {
@@ -19,7 +27,20 @@ class Index extends React.Component {
     } else
       return (
         <div>
-          <h1>Protected Content</h1>
+          <div>
+            <h1>Protected Content</h1>
+          </div>
+          <div>
+            <ul>
+              {this.state.isLoading ? (
+                <li>Loading...</li>
+              ) : (
+                this.state.users.map(user => {
+                  return <li>{user.email}</li>;
+                })
+              )}
+            </ul>
+          </div>
         </div>
       );
   }

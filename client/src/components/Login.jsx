@@ -11,27 +11,25 @@ export default class Login extends React.Component {
   constructor() {
     super();
     this.state = {
-      fireRedirect: true
+      fireRedirect: true,
+      users: []
     };
   }
-  users = [
-    {
-      email: "kyle@kyle.com",
-      password: "password1"
-    },
-    {
-      email: "test@test.com",
-      password: "password2"
-    },
-    {
-      email: "sam@sung.com",
-      password: "password3"
-    }
-  ];
+
+  componentDidMount() {
+    fetch("http://localhost:5000/users")
+      .then(res => res.json())
+      .then(result => {
+        this.setState({
+          users: result,
+          isLoading: false
+        });
+      });
+  }
 
   handleLogin = event => {
     event.preventDefault();
-    this.users.forEach(user => {
+    this.state.users.forEach(user => {
       if (
         event.target[0].value === user.email &&
         event.target[1].value === user.password
@@ -62,6 +60,7 @@ export default class Login extends React.Component {
                 <Button>Submit</Button>
               </Form>
             </form>
+
             {cookies.get("loggedIn") == "true" ? (
               <Redirect to="/dashboard" />
             ) : null}

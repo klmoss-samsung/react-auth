@@ -5,20 +5,22 @@ import Cookies from "universal-cookie";
 const cookies = new Cookies();
 
 export default class Logout extends React.Component {
-  users = [
-    {
-      email: "kyle@kyle.com",
-      password: "password1"
-    },
-    {
-      email: "test@test.com",
-      password: "password2"
-    },
-    {
-      email: "sam@sung.com",
-      password: "password3"
-    }
-  ];
+  constructor() {
+    super();
+    this.state = {
+      users: []
+    };
+  }
+
+  componentDidMount() {
+    fetch("http://localhost:5000/users")
+      .then(res => res.json())
+      .then(result => {
+        this.setState({
+          users: result
+        });
+      });
+  }
 
   handleLogout = event => {
     event.preventDefault();
@@ -27,7 +29,7 @@ export default class Logout extends React.Component {
         event.target[0].value === user.email &&
         event.target[1].value === user.password
       ) {
-        cookies.set("loggedIn", true, { path: "/" });
+        cookies.set("loggedIn", false, { path: "/" });
         const { history } = this.props;
         history.push("/dashboard");
       }
